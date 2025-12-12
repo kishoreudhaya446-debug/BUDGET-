@@ -1,0 +1,560 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget & Expense Tracker MIS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .budget-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 5px solid;
+        }
+
+        .summary-card.budget {
+            border-color: #28a745;
+        }
+
+        .summary-card.expenses {
+            border-color: #dc3545;
+        }
+
+        .summary-card.remaining {
+            border-color: #17a2b8;
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .summary-card .amount {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .expense-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expense-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .expense-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .expense-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        .expense-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .expense-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .category-food { background: #fd7e14; }
+        .category-transport { background: #20c997; }
+        .category-entertainment { background: #e83e8c; }
+        .category-bills { background: #6610f2; }
+        .category-shopping { background: #17a2b8; }
+        .category-healthcare { background: #dc3545; }
+        .category-other { background: #6c757d; }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .expense-table {
+                overflow-x: auto;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Personal Budget & Expense Tracker</h1>
+            <p>Manage your finances with ease - Track, Analyze, Save</p>
+        </div>
+
+        <div class="content">
+            <!-- Budget Section -->
+            <div class="card">
+                <h2>📊 Set Monthly Budget</h2>
+                <div class="budget-section">
+                    <div class="form-group">
+                        <label for="budgetAmount">Monthly Budget (₹)</label>
+                        <input type="number" id="budgetAmount" placeholder="Enter your budget">
+                    </div>
+                    <button class="btn-primary" onclick="setBudget()" style="align-self: flex-end;">Set Budget</button>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary">
+                <div class="summary-card budget">
+                    <h3>Monthly Budget</h3>
+                    <div class="amount" id="budgetDisplay">₹0</div>
+                </div>
+                <div class="summary-card expenses">
+                    <h3>Total Expenses</h3>
+                    <div class="amount" id="expensesDisplay">₹0</div>
+                </div>
+                <div class="summary-card remaining">
+                    <h3>Remaining Budget</h3>
+                    <div class="amount" id="remainingDisplay">₹0</div>
+                </div>
+            </div>
+
+            <!-- Add Expense Section -->
+            <div class="card">
+                <h2>➕ Add New Expense</h2>
+                <div class="expense-form">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option value="Food">🍔 Food</option>
+                            <option value="Transport">🚗 Transport</option>
+                            <option value="Entertainment">🎬 Entertainment</option>
+                            <option value="Bills">💡 Bills</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Healthcare">🏥 Healthcare</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount" placeholder="Enter amount">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="Enter description">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addExpense()">Add Expense</button>
+            </div>
+
+            <!-- Expense History -->
+            <div class="card">
+                <h2>📋 Expense History</h2>
+                <div class="expense-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTableBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <div>📝</div>
+                                    <p>No expenses recorded yet. Start tracking your expenses!</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-warning" onclick="exportData()">📥 Export Data</button>
+                    <button class="btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let budget = 0;
+        let expenses = [];
+
+        // Load data from localStorage
+        function loadData() {
+            const savedBudget = localStorage.getItem('budget');
+            const savedExpenses = localStorage.getItem('expenses');
+            
+            if (savedBudget) budget = parseFloat(savedBudget);
+            if (savedExpenses) expenses = JSON.parse(savedExpenses);
+            
+            updateDisplay();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('budget', budget);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        }
+
+        // Set budget
+        function setBudget() {
+            const budgetInput = document.getElementById('budgetAmount');
+            const value = parseFloat(budgetInput.value);
+            
+            if (isNaN(value) || value <= 0) {
+                alert('Please enter a valid budget amount!');
+                return;
+            }
+            
+            budget = value;
+            saveData();
+            updateDisplay();
+            alert('Budget set successfully!');
+            budgetInput.value = '';
+        }
+
+        // Add expense
+        function addExpense() {
+            const category = document.getElementById('category').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount!');
+                return;
+            }
+            
+            if (!description.trim()) {
+                alert('Please enter a description!');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                category: category,
+                amount: amount,
+                description: description
+            };
+            
+            expenses.push(expense);
+            saveData();
+            updateDisplay();
+            
+            // Clear form
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+            
+            alert('Expense added successfully!');
+        }
+
+        // Delete expense
+        function deleteExpense(id) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                expenses = expenses.filter(e => e.id !== id);
+                saveData();
+                updateDisplay();
+            }
+        }
+
+        // Clear all expenses
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all expenses? This cannot be undone!')) {
+                expenses = [];
+                saveData();
+                updateDisplay();
+                alert('All expenses cleared!');
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            // Update summary
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const remaining = budget - totalExpenses;
+            
+            document.getElementById('budgetDisplay').textContent = '₹' + budget.toFixed(2);
+            document.getElementById('expensesDisplay').textContent = '₹' + totalExpenses.toFixed(2);
+            document.getElementById('remainingDisplay').textContent = '₹' + remaining.toFixed(2);
+            
+            // Change color based on remaining budget
+            const remainingCard = document.getElementById('remainingDisplay');
+            if (remaining < 0) {
+                remainingCard.style.color = '#dc3545';
+            } else if (remaining < budget * 0.2) {
+                remainingCard.style.color = '#ffc107';
+            } else {
+                remainingCard.style.color = '#28a745';
+            }
+            
+            // Update table
+            const tbody = document.getElementById('expenseTableBody');
+            
+            if (expenses.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div>📝</div>
+                            <p>No expenses recorded yet. Start tracking your expenses!</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = expenses.map(expense => `
+                    <tr>
+                        <td>${expense.date}</td>
+                        <td>
+                            <span class="category-badge category-${expense.category.toLowerCase()}">
+                                ${expense.category}
+                            </span>
+                        </td>
+                        <td>${expense.description}</td>
+                        <td><strong>₹${expense.amount.toFixed(2)}</strong></td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteExpense(${expense.id})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).reverse().join('');
+            }
+        }
+
+        // Export data
+        function exportData() {
+            const data = {
+                budget: budget,
+                expenses: expenses,
+                totalExpenses: expenses.reduce((sum, e) => sum + e.amount, 0),
+                remaining: budget - expenses.reduce((sum, e) => sum + e.amount, 0),
+                exportDate: new Date().toLocaleString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'budget_data_' + Date.now() + '.json';
+            link.click();
+            
+            alert('Data exported successfully!');
+        }
+
+        // Load data on page load
+        window.onload = loadData;
+    </script>
+</body>
+</html> 
+
+ 
